@@ -1,0 +1,4 @@
+Method,Accuracy,F1 Score,Time (s),Iterations,Efficiency
+Grid Search (random_forest),0.8187,0.8188,199.24,108,0.0041
+Optuna (random_forest),0.8063,0.8063,58.54,30,0.0135
+Random Search (random_forest),0.7937,0.7939,89.79,30,0.0087

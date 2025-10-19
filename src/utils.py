@@ -42,28 +42,47 @@ def evaluate_model(model, X_test, y_test):
     accuracy = accuracy_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred, average='weighted')
     
+    # Convert predictions to plain Python list so they're JSON serializable
+    try:
+        preds = y_pred.tolist()
+    except AttributeError:
+        preds = list(y_pred)
+
     return {
-        'accuracy': accuracy,
-        'f1_score': f1,
-        'predictions': y_pred
+        'accuracy': float(accuracy),
+        'f1_score': float(f1),
+        'predictions': preds
     }
 
 def save_results(method_name, best_params, metrics, time_taken, n_iterations):
     """Save optimization results"""
+    # Custom JSON encoder to handle numpy types
+    class NpEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.integer):
+                return int(obj)
+            if isinstance(obj, np.floating):
+                return float(obj)
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return super(NpEncoder, self).default(obj)
+
     results = {
         'method': method_name,
         'best_params': best_params,
         'metrics': metrics,
         'time_taken': time_taken,
         'n_iterations': n_iterations,
-        'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
+        'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
     }
     
     os.makedirs('results', exist_ok=True)
-    filename = f'results/{method_name.lower().replace(" ", "_")}_results.json'
+    # Sanitize filename
+    sanitized_method_name = method_name.lower().replace(" ", "_").replace("(", "").replace(")", "")
+    filename = f'results/{sanitized_method_name}_results.json'
     
     with open(filename, 'w') as f:
-        json.dump(results, f, indent=4)
+        json.dump(results, f, indent=4, cls=NpEncoder)
     
     print(f"Results saved to {filename}")
     return results

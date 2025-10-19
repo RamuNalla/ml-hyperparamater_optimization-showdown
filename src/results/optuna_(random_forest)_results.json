@@ -1,0 +1,13 @@
+{
+    "method": "Optuna (random_forest)",
+    "best_params": {
+        "n_estimators": 284,
+        "max_depth": 16,
+        "min_samples_split": 4,
+        "min_samples_leaf": 2,
+        "max_features": "log2"
+    },
+    "metrics": {
+        "accuracy": 0.80625,
+        "f1_score": 0.8063259803921567,
+        "predictions": 

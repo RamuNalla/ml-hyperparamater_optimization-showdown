@@ -17,8 +17,11 @@ def load_all_results():
         if filename.endswith('_results.json'):
             filepath = os.path.join(results_dir, filename)
             with open(filepath, 'r') as f:
-                result = json.load(f)
-                all_results.append(result)
+                try:
+                    result = json.load(f)
+                    all_results.append(result)
+                except json.JSONDecodeError:
+                    print(f"Warning: Could not decode JSON from {filename}. File might be empty or corrupt. Skipping.")
     
     return all_results
 
